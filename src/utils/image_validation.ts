@@ -21,13 +21,10 @@ function getExtension(filename: string): string | null {
   return ext || null;
 }
 
-// Detección básica por firma (magic numbers)
-// Retorna 'jpeg' | 'png' | 'heic' | 'heif' | 'unknown'
+
 function detectImageType(buf: Buffer): string {
   if (!buf || buf.length < 12) return 'unknown';
-  // JPEG: FF D8
   if (buf[0] === 0xff && buf[1] === 0xd8) return 'jpeg';
-  // PNG: 89 50 4E 47 0D 0A 1A 0A
   if (
     buf[0] === 0x89 &&
     buf[1] === 0x50 &&
@@ -40,7 +37,6 @@ function detectImageType(buf: Buffer): string {
   ) {
     return 'png';
   }
-  // HEIC/HEIF: ISO BMFF 'ftyp' brand en offset 4
   if (buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) {
     const brand = buf.slice(8, 12).toString('ascii').toLowerCase();
     if (brand.includes('heic') || brand.includes('heix') || brand.includes('hevc') || brand.includes('hevx')) {
@@ -53,7 +49,6 @@ function detectImageType(buf: Buffer): string {
   return 'unknown';
 }
 
-// ValidationError ahora proviene de utils/errors
 
 export interface UploadLikeFile {
   originalname: string;
@@ -62,7 +57,6 @@ export interface UploadLikeFile {
   size?: number;
 }
 
-// Valida y devuelve el contenido si es correcto; lanza ValidationError si no.
 export function validateProfilePhoto(file: UploadLikeFile): Buffer {
   const filename = (file.originalname || '').toLowerCase();
 
@@ -102,7 +96,7 @@ export function validateProfilePhoto(file: UploadLikeFile): Buffer {
 export function mapRealTypeToImageEnum(realType: string): ImageType | null {
   switch (realType) {
     case 'jpeg':
-      return ImageType.JPEG; // puede ser .jpg o .jpeg
+      return ImageType.JPEG;
     case 'png':
       return ImageType.PNG;
     case 'heic':
