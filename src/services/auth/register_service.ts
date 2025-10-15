@@ -44,7 +44,7 @@ export async function registerService(rawBody: any): Promise<RegisterResponse> {
 
   const defaultRoleId = await getRoleIdByName(RoleName.MEMBER);
   if (!defaultRoleId) {
-    logger.warn('Role MEMBER no encontrado; se crea usuario sin role_id');
+    logger.warn('Role MEMBER not found; creating user without role_id');
   }
 
   const password_hash = await hashPassword(input.password);
@@ -58,6 +58,6 @@ export async function registerService(rawBody: any): Promise<RegisterResponse> {
     role_id: defaultRoleId ?? null,
   });
 
-  logger.info(`Usuario registrado: ${user.email} (id=${user.id})`);
+  logger.info(`User registered: ${user.email} (id=${user.id})`);
   return { user: toPublicUser(user) };
 }

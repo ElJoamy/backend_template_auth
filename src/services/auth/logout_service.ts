@@ -13,22 +13,21 @@ export async function logoutService(authHeader: string | undefined): Promise<Log
       ? authHeader!.slice('Bearer '.length)
       : undefined;
     if (!token) {
-      logger.warn('Logout sin Authorization header.');
+      logger.warn('Logout without Authorization header.');
     } else {
       const payload = await decodeToken(token);
       if (payload) {
-        logger.info(`Logout de usuario sub=${payload.sub ?? 'desconocido'}`);
+        logger.info(`User logout sub=${payload.sub ?? 'unknown'}`);
         if (payload.jti) {
           await revokeSessionByJti(String(payload.jti));
         }
       } else {
-        logger.warn('Logout con token inválido o expirado.');
+        logger.warn('Logout with invalid or expired token.');
       }
     }
     return { success: true };
   } catch (e: any) {
-    logger.error(`Error en logout: ${e?.message ?? e}`);
-    // Aun con error interno, no bloqueamos el logout; devolvemos success para cliente stateless
+    logger.error(`Logout error: ${e?.message ?? e}`);
     return { success: true };
   }
 }

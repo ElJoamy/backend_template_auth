@@ -11,12 +11,11 @@ import {
   type UserRecord,
 } from '../../repositories/auth/login_repository';
 import { getActiveSessionByUserId, createSession } from '../../repositories/auth/session_repository';
-//
+
 
 const _APP_SETTINGS: AppSettings = getAppSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
-// Eliminado: la respuesta ya no incluye el objeto PublicUser
 
 export async function loginService(rawBody: any): Promise<LoginResponse> {
   const input: LoginRequest = parseLoginRequest(rawBody);
@@ -39,7 +38,7 @@ export async function loginService(rawBody: any): Promise<LoginResponse> {
     throw new AuthError('Ya existe una sesión activa para este usuario.', 409);
   }
 
-  logger.info(`Login exitoso: ${user.email}`);
+  logger.info(`Login successful: ${user.email}`);
   const payload = {
     sub: String(user.id),
     email: user.email,
@@ -55,10 +54,10 @@ export async function loginService(rawBody: any): Promise<LoginResponse> {
     try {
       await createSession(user.id, decoded.jti as string, expiresAt);
     } catch (e: any) {
-      logger.error(`No se pudo crear sesión: ${e?.message ?? e}`);
+      logger.error(`Failed to create session: ${e?.message ?? e}`);
     }
   } else {
-    logger.warn('Token sin jti/exp al crear sesión.');
+    logger.warn('Token missing jti/exp when creating session.');
   }
   return {
     user_id: user.id,
