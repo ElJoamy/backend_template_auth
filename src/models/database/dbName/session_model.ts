@@ -14,7 +14,6 @@ import type { AppSettings } from '../../../config/settings';
 import { getAppSettings } from '../../../config/settings';
 import { User } from './user_model';
 
-// Logger por archivo
 const _APP_SETTINGS: AppSettings = getAppSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
@@ -44,4 +43,4 @@ export class Session extends BaseModel {
   revokedAt?: Date | null;
 }
 
-logger.info('Session entity declarada: control de sesiones activas por usuario.');
+logger.info('Session entity declared: controls active sessions per user.');

@@ -12,7 +12,6 @@ import type { AppSettings } from '../../../config/settings';
 import { getAppSettings } from '../../../config/settings';
 import { RoleName } from '../../../schemas/roles';
 
-// Logger por archivo
 const _APP_SETTINGS: AppSettings = getAppSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
@@ -35,4 +34,4 @@ export class Role extends BaseModel {
   updatedAt!: Date;
 }
 
-logger.info('Role entity declarada con enum fijo y descripciones.');
+logger.info('Role entity declared with fixed enum and descriptions.');

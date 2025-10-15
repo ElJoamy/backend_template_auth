@@ -15,7 +15,6 @@ import { getAppSettings } from '../../../config/settings';
 import { Role } from './role_model';
 import { ImageType } from '../../../schemas/media/image_types';
 
-// Logger por archivo
 const _APP_SETTINGS: AppSettings = getAppSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
@@ -59,4 +58,4 @@ export class User extends BaseModel {
   updatedAt!: Date;
 }
 
-logger.info('User entity declarada: lista para sincronización/uso con TypeORM.');
+logger.info('User entity declared: ready for TypeORM sync/use.');
