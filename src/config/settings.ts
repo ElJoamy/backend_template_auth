@@ -1,10 +1,7 @@
 import path from "path";
 import dotenv from "dotenv";
 
-// Carga variables desde .env (equivalente a model_config = SettingsConfigDict(env_file=".env"))
 dotenv.config({ path: path.join(process.cwd(), ".env") });
-
-// Definiciones tipadas de configuración
 
 export interface AppSettings {
   service_name: string;
@@ -80,7 +77,6 @@ export function getSettings(): Settings {
   return settings;
 }
 
-// Helpers de acceso
 export function getAppSettings(): AppSettings {
   return getSettings().app;
 }
@@ -97,7 +93,6 @@ export function getCorsSettings(): CorsSettings {
   return getSettings().cors;
 }
 
-// Inicializa configuración predeterminada (default export)
 const settings = getSettings();
 
 export default settings;

@@ -27,12 +27,12 @@ export async function initOrm(): Promise<void> {
   if (initialized) return;
   if (!AppDataSource.isInitialized) {
     await AppDataSource.initialize();
-    logger.info(`TypeORM inicializado en DB=${_DB_SETTINGS.db_name}`);
+    logger.info(`TypeORM initialized on DB=${_DB_SETTINGS.db_name}`);
     try {
       await AppDataSource.synchronize();
-      logger.info('Esquema sincronizado: tablas creadas/actualizadas según entidades.');
+      logger.info('Schema synchronized: tables created/updated according to entities.');
     } catch (err) {
-      logger.error(`No se pudo sincronizar el esquema: ${(err as Error).message}`);
+      logger.error(`Failed to synchronize schema: ${(err as Error).message}`);
       throw err;
     }
   }

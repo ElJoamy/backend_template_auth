@@ -5,10 +5,8 @@ import { AppSettings, getAppSettings, getDbSettings, type DbSettings } from "./s
 const _DB_SETTINGS: DbSettings = getDbSettings();
 const _APP_SETTINGS: AppSettings = getAppSettings();
 
-// Logger por archivo
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
-// Pool de conexiones para múltiples usuarios
 export const dbPool = mysql.createPool({
   host: _DB_SETTINGS.db_host,
   user: _DB_SETTINGS.db_user,
@@ -21,7 +19,6 @@ export const dbPool = mysql.createPool({
 
 export async function initDb(): Promise<void> {
   try {
-    // Asegura que la base de datos exista antes de abrir el pool
     const bootstrapConn = await mysql.createConnection({
       host: _DB_SETTINGS.db_host,
       user: _DB_SETTINGS.db_user,
@@ -38,10 +35,10 @@ export async function initDb(): Promise<void> {
     await conn.ping();
     conn.release();
     logger.info(
-      `MySQL pool inicializado en DB=${_DB_SETTINGS.db_name}`
+      `MySQL pool initialized on DB=${_DB_SETTINGS.db_name}`
     );
   } catch (err) {
-    logger.error(`Error conectando a MySQL: ${(err as Error).message}`);
+    logger.error(`Error connecting to MySQL: ${(err as Error).message}`);
     throw err;
   }
 }
@@ -49,8 +46,8 @@ export async function initDb(): Promise<void> {
 export async function closeDb(): Promise<void> {
   try {
     await dbPool.end();
-    logger.info("MySQL pool cerrado correctamente");
+    logger.info("MySQL pool closed successfully");
   } catch (err) {
-    logger.error(`Error cerrando el pool: ${(err as Error).message}`);
+    logger.error(`Error closing pool: ${(err as Error).message}`);
   }
 }

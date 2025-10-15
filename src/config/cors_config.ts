@@ -1,4 +1,3 @@
-// src/config/cors_config.ts
 import cors from "cors";
 import type { Express } from "express";
 import { setupLogger } from "../utils/logger";
@@ -20,7 +19,6 @@ const allowedOrigins = [
 
 export function addCors(app: Express): void {
   const originCheck: cors.CorsOptions["origin"] = (origin, callback) => {
-    // Rechaza peticiones sin Origin (curl/Postman) para ser 100% estrictos:
     if (!origin) return callback(new Error("CORS blocked: missing Origin header"));
 
     const normalized = origin.replace(/\/$/, "");
@@ -32,7 +30,6 @@ export function addCors(app: Express): void {
   const allowAll = (_CORS_SETTINGS.allowed_origins || "all").toLowerCase() === "all";
 
   const corsOptions: cors.CorsOptions = {
-    // Para modo "all" con credentials:true, reflejar el origin del request.
     origin: allowAll ? true : originCheck,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -44,8 +41,8 @@ export function addCors(app: Express): void {
   app.options(/.*/, cors(corsOptions));
 
   if (allowAll) {
-    logger.info("CORS modo 'all': se permite cualquier Origin");
+    logger.info("CORS mode 'all': any Origin allowed");
   } else {
-    logger.info(`CORS modo 'limited': solo -> ${allowedOrigins.join(", ")}`);
+    logger.info(`CORS mode 'limited': allowed -> ${allowedOrigins.join(", ")}`);
   }
 }

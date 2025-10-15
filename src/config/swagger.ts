@@ -8,13 +8,13 @@ const swaggerDefinition: OAS3Definition = {
   info: {
     title: appSettings.service_name,
     version: appSettings.version,
-    description: 'Documentación OpenAPI de Backend Template Auth - Typescrypt',
+    description: 'OpenAPI documentation for Backend Template Auth - Typescrypt',
   },
   servers: [
-    { url: `http://localhost:${appSettings.port}`, description: 'Servidor local' },
+    { url: `http://localhost:${appSettings.port}`, description: 'Local server' },
   ],
   tags: [
-    { name: 'Auth', description: 'Endpoints de autenticación' },
+    { name: 'Auth', description: 'Authentication endpoints' },
   ],
   components: {
     securitySchemes: {
@@ -48,11 +48,11 @@ const swaggerDefinition: OAS3Definition = {
         type: 'object',
         required: ['user_id', 'role_id', 'access_token'],
         properties: {
-          user_id: { type: 'integer', description: 'ID del usuario autenticado' },
-          role_id: { type: 'integer', nullable: true, description: 'ID del rol o null si no aplica' },
+          user_id: { type: 'integer', description: 'Authenticated user ID' },
+          role_id: { type: 'integer', nullable: true, description: 'Role ID or null if not applicable' },
           access_token: {
             type: 'string',
-            description: 'JWT de acceso. Usar en Authorization: Bearer <token>. Incluye jti y exp.',
+            description: 'Access JWT. Use in Authorization: Bearer <token>. Includes jti and exp.',
           },
         },
       },
@@ -60,7 +60,7 @@ const swaggerDefinition: OAS3Definition = {
         type: 'object',
         required: ['success'],
         properties: {
-          success: { type: 'boolean', description: 'true si la petición se procesó. Si el token es válido, revoca la sesión.' },
+          success: { type: 'boolean', description: 'true if the request was processed. If token is valid, session is revoked.' },
         },
       },
       RegisterResponse: {
@@ -74,15 +74,15 @@ const swaggerDefinition: OAS3Definition = {
         type: 'object',
         required: ['name', 'lastname', 'username', 'email', 'phone', 'password'],
         properties: {
-          name: { type: 'string', minLength: 2, description: 'Nombre del usuario (mínimo 2 caracteres)' },
-          lastname: { type: 'string', minLength: 2, description: 'Apellido del usuario (mínimo 2 caracteres)' },
-          username: { type: 'string', description: '3-20 caracteres; letras, números, . _ -' },
-          email: { type: 'string', format: 'email', description: 'Correo electrónico válido' },
-          phone: { type: 'string', description: 'Teléfono 6-15 dígitos' },
+          name: { type: 'string', minLength: 2, description: 'User first name (minimum 2 characters)' },
+          lastname: { type: 'string', minLength: 2, description: 'User last name (minimum 2 characters)' },
+          username: { type: 'string', description: '3-20 characters; letters, numbers, . _ -' },
+          email: { type: 'string', format: 'email', description: 'Valid email address' },
+          phone: { type: 'string', description: 'Phone number 6-15 digits' },
           password: {
             type: 'string',
             minLength: 8,
-            description: 'Mínimo 8; debe incluir mayúscula, minúscula, número y símbolo; sin dígitos secuenciales',
+            description: 'Minimum 8; must include uppercase, lowercase, number and symbol; no sequential digits',
           },
         },
       },
@@ -92,25 +92,25 @@ const swaggerDefinition: OAS3Definition = {
             type: 'object',
             required: ['email', 'password'],
             properties: {
-              email: { type: 'string', format: 'email', description: 'Correo del usuario. Alternativamente, envía username.' },
-              password: { type: 'string', minLength: 8, description: 'Contraseña del usuario (mínimo 8 caracteres)' },
+              email: { type: 'string', format: 'email', description: 'User email. Alternatively, send username.' },
+              password: { type: 'string', minLength: 8, description: 'User password (minimum 8 characters)' },
             },
           },
           {
             type: 'object',
             required: ['username', 'password'],
             properties: {
-              username: { type: 'string', description: 'Nombre de usuario (3-20, letras/números/._-)' },
-              password: { type: 'string', minLength: 8, description: 'Contraseña del usuario (mínimo 8 caracteres)' },
+              username: { type: 'string', description: 'Username (3-20, letters/numbers/._-)' },
+              password: { type: 'string', minLength: 8, description: 'User password (minimum 8 characters)' },
             },
           },
         ],
-        description: 'Proveer email o username junto con password. Si el cliente envía "email" con un username, el backend lo tratará como username.',
+        description: 'Provide email or username along with password. If client sends "email" with a username value, backend treats it as username.',
       },
       ErrorResponse: {
         type: 'object',
         properties: {
-          error: { type: 'string', description: 'Mensaje de error legible para el cliente' },
+          error: { type: 'string', description: 'Client-readable error message' },
         },
       },
     },
