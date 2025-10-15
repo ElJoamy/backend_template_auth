@@ -1,4 +1,3 @@
-// Tipos de imagen permitidos para perfiles
 export enum ImageType {
   JPG = 'jpg',
   JPEG = 'jpeg',
