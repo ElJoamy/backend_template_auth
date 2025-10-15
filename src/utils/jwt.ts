@@ -8,7 +8,6 @@ const _JWT_SETTINGS: JwtSettings = getJwtSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
 function getSecretKey(): Uint8Array {
-  // jose requiere Uint8Array para claves HMAC
   return new TextEncoder().encode(_JWT_SETTINGS.jwt_secret);
 }
 
@@ -25,10 +24,10 @@ async function buildToken(data: Record<string, any>, expiresMinutes: number): Pr
       .setIssuer(_JWT_SETTINGS.jwt_issuer)
       .setAudience(_JWT_SETTINGS.jwt_audience)
       .sign(getSecretKey());
-    logger.debug('✅ JWT generado correctamente');
+    logger.debug('✅ JWT generated successfully');
     return token;
   } catch (e: any) {
-    logger.error(`❌ Error generando JWT: ${e?.message ?? e}`);
+    logger.error(`❌ Error generating JWT: ${e?.message ?? e}`);
     throw e;
   }
 }
@@ -48,10 +47,10 @@ export async function decodeToken(token: string): Promise<Record<string, any> | 
       audience: _JWT_SETTINGS.jwt_audience,
       algorithms: [_JWT_SETTINGS.jwt_algorithm as any],
     });
-    logger.debug('🔓 JWT decodificado exitosamente');
+    logger.debug('🔓 JWT decoded successfully');
     return payload as Record<string, any>;
   } catch (e: any) {
-    logger.warn(`⚠️ Token inválido o expirado: ${e?.message ?? e}`);
+    logger.warn(`⚠️ Invalid or expired token: ${e?.message ?? e}`);
     return null;
   }
 }

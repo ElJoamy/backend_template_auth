@@ -8,7 +8,6 @@ const logger = setupLogger(_APP_SETTINGS.log_level);
 
 function isSequential(digits: string): boolean {
   if (!digits || digits.length < 2) return false;
-  // Ascendente: cada siguiente es actual + 1
   let asc = true;
   for (let i = 0; i < digits.length - 1; i++) {
     if (Number(digits[i]) + 1 !== Number(digits[i + 1])) {
@@ -18,7 +17,6 @@ function isSequential(digits: string): boolean {
   }
   if (asc) return true;
 
-  // Descendente: cada siguiente es actual - 1
   for (let i = 0; i < digits.length - 1; i++) {
     if (Number(digits[i]) - 1 !== Number(digits[i + 1])) {
       return false;

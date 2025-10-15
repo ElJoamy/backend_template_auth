@@ -45,7 +45,7 @@ export function setupLogger(
       new winston.transports.File({
         filename: logPath,
         level: normalizedLevel,
-        options: { encoding: "utf-8" }, // 👈 fuerza UTF-8 para evitar errores con tildes, etc.
+        options: { encoding: "utf-8" },
       }),
       new winston.transports.Console({
         level: normalizedLevel,
