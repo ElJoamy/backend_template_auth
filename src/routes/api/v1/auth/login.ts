@@ -16,12 +16,12 @@ const upload = multer();
  * /api/v1/auth/login:
  *   post:
  *     tags: [Auth]
- *     summary: Inicio de sesión
+ *     summary: Login
  *     description: |
- *       Autentica a un usuario usando **email** o **username** más **password**.
- *       - Password requiere mínimo 8 caracteres.
- *       - Devuelve un **access_token (JWT)** para usar en `Authorization: Bearer <token>`.
- *       - Si ya existe una sesión activa para el usuario, devuelve **409 Conflict**.
+ *       Authenticates a user using **email** or **username** plus **password**.
+ *       - Password requires at least 8 characters.
+ *       - Returns an **access_token (JWT)** to use in `Authorization: Bearer <token>`.
+ *       - If an active session already exists for the user, returns **409 Conflict**.
  *     security: []
  *     requestBody:
  *       required: true
@@ -31,44 +31,44 @@ const upload = multer();
  *             $ref: '#/components/schemas/LoginRequest'
  *           examples:
  *             email_login:
- *               summary: Login usando email
+ *               summary: Login using email
  *               value:
- *                 email: usuario@example.com
- *                 password: MiPassw0rd!
+ *                 email: john@example.com
+ *                 password: MyPassw0rd!
  *             username_login:
- *               summary: Login usando username
+ *               summary: Login using username
  *               value:
- *                 username: usuario123
- *                 password: MiPassw0rd!
+ *                 username: john123
+ *                 password: MyPassw0rd!
   *         multipart/form-data:
   *           schema:
   *             $ref: '#/components/schemas/LoginRequest'
   *           examples:
   *             email_login_form:
-  *               summary: Login (form-data) usando email
+  *               summary: Login (form-data) using email
   *               value:
-  *                 email: usuario@example.com
-  *                 password: MiPassw0rd!
+  *                 email: john@example.com
+  *                 password: MyPassw0rd!
   *             username_login_form:
-  *               summary: Login (form-data) usando username
+  *               summary: Login (form-data) using username
   *               value:
-  *                 username: usuario123
-  *                 password: MiPassw0rd!
+  *                 username: john123
+  *                 password: MyPassw0rd!
  *     responses:
  *       '200':
- *         description: Login exitoso
+ *         description: Login successful
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
  *       '409':
- *         description: Ya existe una sesión activa para el usuario
+ *         description: An active session already exists for the user
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       '401':
- *         description: Credenciales inválidas
+ *         description: Invalid credentials
  *         content:
  *           application/json:
  *             schema:
@@ -82,9 +82,9 @@ loginRouter.post('/login', upload.none(), async (req: Request, res: Response) =>
     const status = err?.statusCode ?? 401;
     const message = err?.message ?? 'Error en login';
     if (err instanceof AuthError || err instanceof ValidationError) {
-      logger.warn(`Login inválido: ${message}`);
+      logger.warn(`Invalid login: ${message}`);
     } else {
-      logger.error(`Fallo en login: ${message}`);
+      logger.error(`Login failed: ${message}`);
     }
     res.status(status).json({ error: message });
   }

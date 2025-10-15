@@ -16,13 +16,13 @@ const upload = multer();
  * /api/v1/auth/register:
  *   post:
  *     tags: [Auth]
- *     summary: Registro de usuario
+ *     summary: User registration
  *     description: |
- *       Crea un nuevo usuario.
- *       - `username`: 3-20 caracteres; letras, números, `.` `_` `-`.
- *       - `email`: formato de email válido.
- *       - `phone`: 6-15 dígitos, sin espacios ni símbolos.
- *       - `password`: mínima de 8; debe incluir mayúscula, minúscula, número y símbolo; sin dígitos secuenciales.
+ *       Creates a new user.
+ *       - `username`: 3-20 characters; letters, numbers, `.` `_` `-`.
+ *       - `email`: valid email format.
+ *       - `phone`: 6-15 digits, no spaces or symbols.
+ *       - `password`: at least 8; must include uppercase, lowercase, number, and symbol; no sequential digits.
  *     security: []
  *     requestBody:
  *       required: true
@@ -31,31 +31,31 @@ const upload = multer();
  *           schema:
  *             $ref: '#/components/schemas/RegisterRequest'
  *           example:
- *             name: Juan
- *             lastname: Pérez
- *             username: juanperez
- *             email: juan@example.com
+ *             name: John
+ *             lastname: Doe
+ *             username: johndoe
+ *             email: john@example.com
  *             phone: "600123456"
- *             password: MiPassw0rd!
+ *             password: MyPassw0rd!
  *         multipart/form-data:
  *           schema:
  *             $ref: '#/components/schemas/RegisterRequest'
  *           example:
- *             name: Juan
- *             lastname: Pérez
- *             username: juanperez
- *             email: juan@example.com
+ *             name: John
+ *             lastname: Doe
+ *             username: johndoe
+ *             email: john@example.com
  *             phone: "600123456"
- *             password: MiPassw0rd!
+ *             password: MyPassw0rd!
  *     responses:
  *       '201':
- *         description: Usuario creado
+ *         description: User created
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RegisterResponse'
  *       '400':
- *         description: Datos inválidos o duplicados
+ *         description: Invalid or duplicate data
  *         content:
  *           application/json:
  *             schema:
@@ -69,9 +69,9 @@ registerRouter.post('/register', upload.none(), async (req: Request, res: Respon
     const status = err?.statusCode ?? 400;
     const message = err?.message ?? 'Error en registro';
     if (err instanceof ValidationError) {
-      logger.warn(`Registro inválido: ${message}`);
+      logger.warn(`Invalid registration: ${message}`);
     } else {
-      logger.error(`Fallo en registro: ${message}`);
+      logger.error(`Registration failed: ${message}`);
     }
     res.status(status).json({ error: message });
   }

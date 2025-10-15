@@ -13,16 +13,16 @@ export const logoutRouter = Router();
  * /api/v1/auth/logout:
  *   post:
  *     tags: [Auth]
- *     summary: Cerrar sesión
+ *     summary: Logout
  *     description: |
- *       Revoca la sesión activa asociada al **JWT** suministrado en el header `Authorization: Bearer <token>`.
- *       - Idempotente: si el token es inválido o ya se cerró la sesión, devuelve `success: true`.
- *       - Requiere autenticación Bearer.
+ *       Revokes the active session associated with the **JWT** provided in the `Authorization: Bearer <token>` header.
+ *       - Idempotent: if the token is invalid or the session is already closed, returns `success: true`.
+ *       - Requires Bearer authentication.
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       '200':
- *         description: Logout exitoso
+ *         description: Logout successful
  *         content:
  *           application/json:
  *             schema:
@@ -34,7 +34,7 @@ logoutRouter.post('/logout', async (req: Request, res: Response) => {
     res.status(200).json(result);
   } catch (err: any) {
     const message = err?.message ?? 'Error en logout';
-    logger.error(`Fallo en logout: ${message}`);
+    logger.error(`Logout failed: ${message}`);
     res.status(200).json({ success: true });
   }
 });
