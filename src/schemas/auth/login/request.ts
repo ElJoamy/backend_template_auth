@@ -13,8 +13,7 @@ export function parseLoginRequest(body: any): LoginRequest {
   }
   const { email, username, password } = body;
 
-  // Soportar clientes que envían mal el campo: si viene 'email' pero no es email,
-  // intentamos usarlo como username; y viceversa.
+
   const emailRaw = typeof email === 'string' ? email : undefined;
   const usernameRaw = typeof username === 'string' ? username : undefined;
 
@@ -25,12 +24,10 @@ export function parseLoginRequest(body: any): LoginRequest {
     try {
       cleanEmail = validateEmail(emailRaw);
     } catch {
-      // Fallback: tratar el valor de 'email' como username si no se proveyó 'username'
       if (!usernameRaw) {
         try {
           cleanUsername = validateUsername(emailRaw);
         } catch {
-          // ignorar; se manejará más abajo
         }
       }
     }
@@ -39,12 +36,10 @@ export function parseLoginRequest(body: any): LoginRequest {
     try {
       cleanUsername = validateUsername(usernameRaw);
     } catch {
-      // Fallback: tratar el valor de 'username' como email si no se proveyó 'email'
       if (!emailRaw) {
         try {
           cleanEmail = validateEmail(usernameRaw);
         } catch {
-          // ignorar; se manejará más abajo
         }
       }
     }
