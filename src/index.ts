@@ -14,7 +14,6 @@ const _APP_SETTINGS: AppSettings = getAppSettings();
 const logger = setupLogger(_APP_SETTINGS.log_level);
 
 app.use(express.json());
-// Soporte para formularios URL-encoded (opcional, útil para compatibilidad)
 app.use(express.urlencoded({ extended: true }));
 addCors(app);
 
@@ -31,17 +30,15 @@ app.get('/health', (_req, res) => {
 
 const { port } = _APP_SETTINGS;
 
-// Inicializa DB y luego arranca el servidor
 Promise.all([initDb(), initOrm()])
   .then(() => {
-    logger.info('DB y ORM inicializados correctamente.');
+    logger.info('DB and ORM initialized successfully.');
     app.listen(port, () => {
       logger.info(`Server running on http://localhost:${port}`);
     });
   })
   .catch((err) => {
-    logger.error(`No se pudo inicializar la DB/ORM: ${err?.message ?? err}`);
-    // Arranca servidor de todas formas (opcional)
+    logger.error(`Failed to initialize DB/ORM: ${err?.message ?? err}`);
     app.listen(port, () => {
       logger.warn(`Server running without full DB/ORM on http://localhost:${port}`);
     });
