@@ -43,7 +43,7 @@ export async function createUser(params: CreateUserParams): Promise<UserRecord> 
     const repoRole = AppDataSource.getRepository(Role);
     const foundRole = await repoRole.findOne({ where: { id: params.role_id } });
     if (!foundRole) {
-      logger.warn(`Role id=${params.role_id} no encontrado; se creará usuario sin role`);
+      logger.warn(`Role id=${params.role_id} not found; user will be created without role`);
     } else {
       roleEntity = foundRole;
     }
@@ -60,7 +60,7 @@ export async function createUser(params: CreateUserParams): Promise<UserRecord> 
   });
 
   const saved = await userRepo.save(entity);
-  logger.info(`Usuario creado con id=${saved.id}`);
-  logger.debug(`register_repository: usuario creado id=${saved.id}`);
+  logger.info(`User created with id=${saved.id}`);
+  logger.debug(`register_repository: user created id=${saved.id}`);
   return toUserRecord(saved);
 }

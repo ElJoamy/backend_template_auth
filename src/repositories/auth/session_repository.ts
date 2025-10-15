@@ -56,7 +56,7 @@ export async function createSession(userId: number, jti: string, expiresAt: Date
 
   const entity = sessionRepo.create({ user, jti, expiresAt });
   const saved = await sessionRepo.save(entity);
-  logger.info(`Sesión creada id=${saved.id} para user_id=${userId}`);
+  logger.info(`Session created id=${saved.id} for user_id=${userId}`);
   return toSessionRecord(saved);
 }
 
@@ -64,15 +64,15 @@ export async function revokeSessionByJti(jti: string): Promise<boolean> {
   const repo = AppDataSource.getRepository(Session);
   const entity = await repo.findOne({ where: { jti } });
   if (!entity) {
-    logger.warn(`No se encontró sesión para jti=${jti} al revocar`);
+    logger.warn(`No session found for jti=${jti} when revoking`);
     return false;
   }
   if (entity.revokedAt) {
-    logger.debug(`Sesión jti=${jti} ya estaba revocada`);
+    logger.debug(`Session jti=${jti} was already revoked`);
     return true;
   }
   entity.revokedAt = new Date();
   await repo.save(entity);
-  logger.info(`Sesión revocada jti=${jti}`);
+  logger.info(`Session revoked jti=${jti}`);
   return true;
 }

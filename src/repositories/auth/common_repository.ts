@@ -44,4 +44,4 @@ export function toUserRecord(entity: User): UserRecord {
   };
 }
 
-logger.debug('common_repository inicializado: mapeo y acceso común a usuarios.');
+logger.debug('common_repository initialized: shared user mapping and access.');
