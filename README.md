@@ -31,7 +31,6 @@ Production-ready authentication API using Node.js, Express 5, and TypeScript. It
 - [Development Scripts](#development-scripts)
 - [Folder Structure](#folder-structure)
 - [Notes](#notes)
-- [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
 
