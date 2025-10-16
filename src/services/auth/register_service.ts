@@ -42,9 +42,9 @@ export async function registerService(rawBody: any): Promise<RegisterResponse> {
     throw new ValidationError('El username ya está registrado.');
   }
 
-  const defaultRoleId = await getRoleIdByName(RoleName.MEMBER);
+  const defaultRoleId = await getRoleIdByName(RoleName.GUEST);
   if (!defaultRoleId) {
-    logger.warn('Role MEMBER not found; creating user without role_id');
+    logger.warn('Role GUEST not found; creating user without role_id');
   }
 
   const password_hash = await hashPassword(input.password);
