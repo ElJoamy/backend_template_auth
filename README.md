@@ -1,4 +1,12 @@
+<p align="center">
+  <img src="./media/logo.png" alt="Backend Auth TS Logo" width="180">
+</p>
+
 # Backend Template Auth - TypeScript
+
+<p align="center">Production-ready authentication API for Node.js + TypeScript.</p>
+
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI%203.0-85EA2D?logo=swagger&logoColor=white) ![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-6BA539?logo=openapi-initiative&logoColor=white) ![MySql](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white) ![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white) ![Express](https://img.shields.io/badge/Express-5-black?logo=express&logoColor=white) ![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white) ![JWT](https://img.shields.io/badge/JWT-JSON%20Web%20Token-000000?logo=json-web-tokens&logoColor=white)
 
 Production-ready authentication API using Node.js, Express 5, and TypeScript. It includes user registration, login, logout, JWT-based access tokens, session persistence, and OpenAPI documentation.
 
@@ -23,6 +31,8 @@ Production-ready authentication API using Node.js, Express 5, and TypeScript. It
 - [Development Scripts](#development-scripts)
 - [Folder Structure](#folder-structure)
 - [Notes](#notes)
+- [Contributing](#contributing)
+- [License](#license)
 - [Author](#author)
 
 ## Overview
@@ -70,7 +80,7 @@ This project provides a secure, extensible authentication backend. It uses Prism
       - App Configuration
       ```env
       # App configuration
-      SERVICE_NAME=Backend Template Auth - Typescrypt
+      SERVICE_NAME=Backend Template Auth - TypeScript
       VERSION=local
       LOG_LEVEL=DEBUG
       PORT=3000
@@ -103,7 +113,7 @@ This project provides a secure, extensible authentication backend. It uses Prism
       ```env
       # Cors configuration
       ALLOWED_ORIGINS=all
-      # To allow originisyou could use 
+      # To allow origins you could use 
       # "all" to allow all origins
       # "limited" to allow only the ones specified in the list located in src/config/cors_config.ts
       ```
@@ -126,9 +136,7 @@ This project provides a secure, extensible authentication backend. It uses Prism
 5. Build and run in production:
    ```sh
     npm run build
-    ```
-    ```sh
-    npm run start
+    npm start
     ```
 The server listens on `http://localhost:<PORT>` (default `3000`).
 
@@ -282,6 +290,11 @@ src/
 - Use strong `JWT_SECRET` and review `JWT_ISSUER`/`JWT_AUDIENCE` for your environment.
 - Set `ALLOWED_ORIGINS=limited` for production and update the whitelist.
 - Logs are written to `logs/` per file (e.g., `login_service.log`).
+
+## License
+
+This project is licensed under a dual license model.  
+See the [LICENSE](LICENSE) file for details.
 
 ## Author
 

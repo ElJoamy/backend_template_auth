@@ -18,7 +18,7 @@
   },
   "keywords": [],
   "author": "ElJoamy",
-  "license": "",
+  "license": "Dual License: Apache 2.0 OR Commercial",
   "description": "Backend Template Auth TypeScript is a backend template for authentication using TypeScript. It includes features such as user registration, login, session management, and JWT token authentication.",
   "dependencies": {
     "argon2": "^0.44.0",
