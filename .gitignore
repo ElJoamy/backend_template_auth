@@ -141,3 +141,15 @@ vite.config.ts.timestamp-*
 .vite/
 
 /tmp/*
+
+# Prisma
+# Mantén versionado `prisma/schema.prisma` y `prisma/migrations/`.
+# Si usas SQLite local en desarrollo, ignora los archivos de DB:
+prisma/*.db
+prisma/*.db-journal
+prisma/*.sqlite
+prisma/*.sqlite-journal
+prisma/*.sqlite3
+
+# Caches del motor de Prisma (si alguna vez se generan fuera de node_modules)
+.prisma/
