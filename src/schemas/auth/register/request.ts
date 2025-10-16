@@ -6,7 +6,7 @@ export interface RegisterRequest {
   lastname: string;
   username: string;
   email: string;
-  phone: string;
+  phone?: string;
   password: string;
 }
 
@@ -23,7 +23,12 @@ export function parseRegisterRequest(body: any): RegisterRequest {
   }
   const cleanUsername = validateUsername(username);
   const cleanEmail = validateEmail(email);
-  const cleanPhone = validatePhoneNumber(phone);
+  // phone es opcional: solo validar si viene y no está vacío
+  const phoneRaw = typeof phone === 'string' ? phone : undefined;
+  let cleanPhone: string | undefined = undefined;
+  if (phoneRaw && phoneRaw.trim().length > 0) {
+    cleanPhone = validatePhoneNumber(phoneRaw);
+  }
   validatePasswordStrength(password);
 
   return {
@@ -31,7 +36,7 @@ export function parseRegisterRequest(body: any): RegisterRequest {
     lastname: lastname.trim(),
     username: cleanUsername,
     email: cleanEmail,
-    phone: cleanPhone,
+    ...(cleanPhone ? { phone: cleanPhone } : {}),
     password,
   };
 }

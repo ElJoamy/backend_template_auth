@@ -4,7 +4,7 @@ export interface PublicUser {
   lastname: string;
   username: string;
   email: string;
-  phone: string;
+  phone: string | null;
   role: {
     id: number | null;
     name: string | null;
