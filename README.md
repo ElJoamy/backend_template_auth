@@ -54,7 +54,7 @@ This project provides a secure, extensible authentication backend. It uses Prism
 - Runtime: `Node.js`
 - Framework: `Express`
 - Language: `TypeScript`
-- DB: `MySQL` (via `mysql2` + `Prisma`)
+- DB: `MySQL` with `Prisma` ORM
 - Auth: `jose` (JWT), `argon2`
 - Docs: `swagger-jsdoc`, `swagger-ui-express`
 - Logging: `winston`, `chalk`
