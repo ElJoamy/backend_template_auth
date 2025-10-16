@@ -303,7 +303,7 @@ See the [LICENSE](LICENSE) file for details.
         <a href="https://github.com/ElJoamy">
             <img src="https://avatars.githubusercontent.com/u/68487005?v=4" width="100;" alt="ElJoamy" style="border-radius: 50%;"/>
             <br />
-            <sub><b>Joseph Anthony Meneses Salguero</b></sub>
+            <sub><b>Joseph Meneses (ElJoamy)</b></sub>
         </a>
         <br />
         <a href="https://linkedin.com/in/joamy5902">
