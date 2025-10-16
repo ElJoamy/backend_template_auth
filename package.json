@@ -5,8 +5,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "predev": "node scripts/prisma-sync.js",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "prestart": "node scripts/prisma-sync.js",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "prisma:pull": "prisma db pull",
+    "prisma:validate": "prisma validate"
   },
   "keywords": [],
   "author": "ElJoamy",
@@ -19,6 +27,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "@prisma/client": "^5.18.0",
     "jose": "^6.1.0",
     "multer": "^2.0.2",
     "mysql2": "^3.15.2",
@@ -29,6 +38,7 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
+    "prisma": "^5.18.0",
     "@types/multer": "^2.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
