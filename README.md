@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./media/logo.png" alt="Backend Auth TS Logo" width="180">
+  <img src="./media/logo.png" alt="Backend Auth TS Logo" width="250">
 </p>
 
 # Backend Template Auth - TypeScript
