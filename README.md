@@ -297,23 +297,19 @@ See the [LICENSE](LICENSE) file for details.
 
 ## Author
 
-<table>
-<tr>
-    <td align="center">
-        <a href="https://github.com/ElJoamy">
-            <img src="https://avatars.githubusercontent.com/u/68487005?v=4" width="100;" alt="ElJoamy" style="border-radius: 50%;"/>
-            <br />
-            <sub><b>Joseph Meneses (ElJoamy)</b></sub>
-        </a>
-        <br />
-        <a href="https://linkedin.com/in/joamy5902">
-            <img src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
-        </a>
-        <a href="https://github.com/ElJoamy">
-            <img src="https://img.shields.io/badge/-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
-        </a>
-        <br />
-        <sub>Backend and AI Developer | Cybersecurity Engineer | DBA</sub>
-    </td>
-</tr>
-</table>
+<p align="center">
+  <a href="https://github.com/ElJoamy">
+    <img src="https://avatars.githubusercontent.com/u/68487005?v=4" width="100" alt="ElJoamy" style="border-radius:50%" />
+    <br />
+    <sub><b>Joseph Meneses (ElJoamy)</b></sub>
+  </a>
+  <br />
+  Backend and AI Developer · Cybersecurity Engineer · DBA
+  <br />
+  <a href="https://linkedin.com/in/joamy5902">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+  </a>
+  <a href="https://github.com/ElJoamy">
+    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
+</p>
