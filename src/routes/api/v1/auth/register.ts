@@ -19,9 +19,10 @@ const upload = multer();
  *     summary: User registration
  *     description: |
  *       Creates a new user.
+ *       The user is assigned role `guest` by default.
  *       - `username`: 3-20 characters; letters, numbers, `.` `_` `-`.
  *       - `email`: valid email format.
- *       - `phone`: 6-15 digits, no spaces or symbols.
+ *       - `phone` (opcional): 6-15 dígitos, sin espacios ni símbolos.
  *       - `password`: at least 8; must include uppercase, lowercase, number, and symbol; no sequential digits.
  *     security: []
  *     requestBody:
@@ -33,9 +34,9 @@ const upload = multer();
  *           example:
  *             name: John
  *             lastname: Doe
- *             username: johndoe
- *             email: john@example.com
- *             phone: "600123456"
+ *             username: johndoe2
+ *             email: john2@example.com
+ *             phone: "65656565"
  *             password: MyPassw0rd!
  *         multipart/form-data:
  *           schema:
@@ -43,9 +44,9 @@ const upload = multer();
  *           example:
  *             name: John
  *             lastname: Doe
- *             username: johndoe
- *             email: john@example.com
- *             phone: "600123456"
+ *             username: johndoe2
+ *             email: john2@example.com
+ *             phone: "65656565"
  *             password: MyPassw0rd!
  *     responses:
  *       '201':
@@ -54,6 +55,17 @@ const upload = multer();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/RegisterResponse'
+ *             example:
+ *               user:
+ *                 id: 7
+ *                 name: John
+ *                 lastname: Doe
+ *                 username: johndoe2
+ *                 email: john2@example.com
+ *                 phone: "65656565"
+ *                 role:
+ *                   id: 4
+ *                   name: guest
  *       '400':
  *         description: Invalid or duplicate data
  *         content:

@@ -16,7 +16,7 @@ export const logoutRouter = Router();
  *     summary: Logout
  *     description: |
  *       Revokes the active session associated with the **JWT** provided in the `Authorization: Bearer <token>` header.
- *       - Idempotent: if the token is invalid or the session is already closed, returns `success: true`.
+ *       - Si la sesión ya estaba cerrada, devuelve **409 Conflict** con mensaje.
  *       - Requires Bearer authentication.
  *     security:
  *       - bearerAuth: []
@@ -27,14 +27,21 @@ export const logoutRouter = Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LogoutResponse'
+ *       '409':
+ *         description: La sesión ya estaba revocada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 logoutRouter.post('/logout', async (req: Request, res: Response) => {
   try {
     const result = await logoutService(req.headers.authorization);
     res.status(200).json(result);
   } catch (err: any) {
+    const status = err?.statusCode ?? 500;
     const message = err?.message ?? 'Error en logout';
     logger.error(`Logout failed: ${message}`);
-    res.status(200).json({ success: true });
+    res.status(status).json({ error: message });
   }
 });
