@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model roles {
+  id          Int        @id @default(autoincrement())
+  name        roles_name @unique(map: "IDX_648e3f5447f725579d7d4ffdfb")
+  description String     @db.VarChar(255)
+  created_at  DateTime   @default(now()) @db.DateTime(6)
+  updated_at  DateTime   @default(now()) @db.DateTime(6)
+  users       users[]
+}
+
+model users {
+  id            Int                @id @default(autoincrement())
+  name          String             @db.VarChar(50)
+  lastname      String             @db.VarChar(50)
+  username      String             @unique(map: "IDX_fe0bb3f6520ee0469504521e71") @db.VarChar(80)
+  email         String             @unique(map: "IDX_97672ac88f789774dd47f7c8be") @db.VarChar(120)
+  phone         String?            @unique(map: "IDX_a000cca60bcf04454e72769949") @db.VarChar(20)
+  password_hash String             @db.VarChar(255)
+  avatar_type   users_avatar_type?
+  created_at    DateTime           @default(now()) @db.DateTime(6)
+  updated_at    DateTime           @default(now()) @db.DateTime(6)
+  role_id       Int?
+  user_sessions user_sessions[]
+  roles         roles?             @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a2cecd1a3531c0b041e29ba46e1")
+
+  @@index([role_id], map: "FK_a2cecd1a3531c0b041e29ba46e1")
+}
+
+model user_sessions {
+  id         Int       @id @default(autoincrement())
+  user_id    Int?
+  jti        String    @unique(map: "IDX_bd37bc320d2dc4a4cbbcd2993a") @db.VarChar(64)
+  created_at DateTime  @default(now()) @db.DateTime(6)
+  updated_at DateTime  @default(now()) @db.DateTime(6)
+  expires_at DateTime  @db.DateTime(0)
+  revoked_at DateTime? @db.DateTime(0)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_085d540d9f418cfbdc7bd55bb19")
+
+  @@index([user_id], map: "FK_085d540d9f418cfbdc7bd55bb19")
+}
+
+enum users_avatar_type {
+  jpg
+  jpeg
+  png
+  heic
+  heif
+}
+
+enum roles_name {
+  super_admin
+  admin
+  member
+  guest
+  invited
+}

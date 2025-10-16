@@ -5,9 +5,10 @@ import { addCors } from './config/cors_config';
 import { getAppSettings, type AppSettings } from './config/settings';
 import { apiRouterV1 } from './routes/api/v1';
 import { initDb } from './config/db_config';
-import { initOrm } from './config/orm_config';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger';
+import { ensureDefaultRoles } from './services/auth/roles_seed';
+import { ensureAdminUser } from './services/auth/admin_seed';
 
 const app = express();
 const _APP_SETTINGS: AppSettings = getAppSettings();
@@ -30,16 +31,18 @@ app.get('/health', (_req, res) => {
 
 const { port } = _APP_SETTINGS;
 
-Promise.all([initDb(), initOrm()])
-  .then(() => {
-    logger.info('DB and ORM initialized successfully.');
+initDb()
+  .then(async () => {
+    logger.info('DB initialized successfully.');
+    await ensureDefaultRoles();
+    await ensureAdminUser();
     app.listen(port, () => {
       logger.info(`Server running on http://localhost:${port}`);
     });
   })
   .catch((err) => {
-    logger.error(`Failed to initialize DB/ORM: ${err?.message ?? err}`);
+    logger.error(`Failed to initialize DB: ${err?.message ?? err}`);
     app.listen(port, () => {
-      logger.warn(`Server running without full DB/ORM on http://localhost:${port}`);
+      logger.warn(`Server running without full DB on http://localhost:${port}`);
     });
   });
