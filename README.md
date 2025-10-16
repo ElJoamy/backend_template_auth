@@ -11,7 +11,7 @@ Production-ready authentication API using Node.js, Express 5, and TypeScript. It
 - [Quick Start](#quick-start)
 - [Configuration](#configuration)
   - [Environment Variables](#environment-variables)
-  - [Admin User Bootstrap](#admin-user-bootstrap)
+  - [Admin User](#admin-user)
   - [CORS](#cors)
 - [Prisma Workflow](#prisma-workflow)
   - [Model to Database](#model-to-database)
