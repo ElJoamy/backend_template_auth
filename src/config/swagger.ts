@@ -1,5 +1,6 @@
 import swaggerJSDoc, { OAS3Definition, OAS3Options } from 'swagger-jsdoc';
 import { getAppSettings, type AppSettings } from './settings';
+import { RoleName } from '../schemas/roles';
 
 const appSettings: AppSettings = getAppSettings();
 
@@ -27,19 +28,19 @@ const swaggerDefinition: OAS3Definition = {
     schemas: {
       PublicUser: {
         type: 'object',
-        required: ['id', 'name', 'lastname', 'username', 'email', 'phone', 'role'],
+        required: ['id', 'name', 'lastname', 'username', 'email', 'role'],
         properties: {
           id: { type: 'integer' },
           name: { type: 'string' },
           lastname: { type: 'string' },
           username: { type: 'string' },
           email: { type: 'string', format: 'email' },
-          phone: { type: 'string' },
+          phone: { type: 'string', nullable: true, description: 'Optional phone number (6-15 digits)' },
           role: {
             type: 'object',
             properties: {
               id: { type: 'integer', nullable: true },
-              name: { type: 'string', nullable: true },
+              name: { type: 'string', nullable: true, enum: Object.values(RoleName) },
             },
           },
         },
@@ -69,22 +70,34 @@ const swaggerDefinition: OAS3Definition = {
         properties: {
           user: { $ref: '#/components/schemas/PublicUser' },
         },
+        example: {
+          user: {
+            id: 7,
+            name: 'John',
+            lastname: 'Doe',
+            username: 'johndoe2',
+            email: 'john2@example.com',
+            phone: '65656565',
+            role: { id: 4, name: 'guest' },
+          },
+        },
       },
       RegisterRequest: {
         type: 'object',
-        required: ['name', 'lastname', 'username', 'email', 'phone', 'password'],
+        required: ['name', 'lastname', 'username', 'email', 'password'],
         properties: {
           name: { type: 'string', minLength: 2, description: 'User first name (minimum 2 characters)' },
           lastname: { type: 'string', minLength: 2, description: 'User last name (minimum 2 characters)' },
           username: { type: 'string', description: '3-20 characters; letters, numbers, . _ -' },
           email: { type: 'string', format: 'email', description: 'Valid email address' },
-          phone: { type: 'string', description: 'Phone number 6-15 digits' },
+          phone: { type: 'string', nullable: true, description: 'Optional; 6-15 digits, no spaces or symbols' },
           password: {
             type: 'string',
             minLength: 8,
             description: 'Minimum 8; must include uppercase, lowercase, number and symbol; no sequential digits',
           },
         },
+        description: 'Al registrarse, el usuario se crea con rol por defecto guest.',
       },
       LoginRequest: {
         oneOf: [

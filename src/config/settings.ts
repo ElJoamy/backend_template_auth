@@ -31,12 +31,18 @@ export interface CorsSettings {
   allowed_origins: string;
 }
 
+export interface UserSettings {
+  service_user: string;
+  service_user_pass: string;
+  service_user_email: string;
+}
 
 export interface Settings {
   app: AppSettings;
   db: DbSettings;
   jwt: JwtSettings;
   cors: CorsSettings;
+  user_admin: UserSettings;
 }
 
 let cachedSettings: Settings | null = null;
@@ -45,6 +51,11 @@ export function getSettings(): Settings {
   if (cachedSettings) return cachedSettings;
 
   const env = process.env;
+
+  const strOrDefault = (val: string | undefined, def: string): string => {
+    const v = (val ?? '').trim();
+    return v.length > 0 ? v : def;
+  };
 
   const settings: Settings = {
     app: {
@@ -71,6 +82,11 @@ export function getSettings(): Settings {
     cors: {
       allowed_origins: env.ALLOWED_ORIGINS ?? "all",
     },
+    user_admin: {
+      service_user: strOrDefault(env.SERVICE_USER, "admin"),
+      service_user_pass: strOrDefault(env.SERVICE_USER_PASS, "AdminPassword159@!"),
+      service_user_email: strOrDefault(env.SERVICE_USER_EMAIL, "admin@example.com"),
+    },
   };
 
   cachedSettings = settings;
@@ -91,6 +107,10 @@ export function getJwtSettings(): JwtSettings {
 
 export function getCorsSettings(): CorsSettings {
   return getSettings().cors;
+}
+
+export function getUserAdminSettings(): UserSettings {
+  return getSettings().user_admin;
 }
 
 const settings = getSettings();
