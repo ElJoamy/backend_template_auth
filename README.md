@@ -48,6 +48,8 @@ This project provides a secure, extensible authentication backend. It uses Prism
 - Structured logging to console and `logs/` with `winston`
 - CORS configuration with open or restricted modes
 - Swagger/OpenAPI docs at `/docs` and `/openapi.json`
+- Personal access tokens (API Keys): create, list and revoke with expiry presets
+- Profile updates support avatar upload with automatic image type detection; optional text fields may be omitted
 
 ## Tech Stack
 
@@ -186,6 +188,13 @@ The Prisma schema references `env("DATABASE_URL")`. Credentials should be set in
 - Introspect: `npm run prisma:pull`
 - Regenerate client: `npm run prisma:generate`
 
+### Notes on personal tokens schema
+
+- `personal_access_tokens.expires_at` is required and stored as `@db.DateTime(6)` for microsecond precision, aligned with `created_at`/`updated_at`.
+- `personal_access_tokens.revoked_at` is optional and set when a token is revoked.
+- `personal_access_tokens.expires_preset` uses a Prisma enum (`personal_token_expiry_preset`) whose values are `ONE_WEEK`, `ONE_MONTH`, `THREE_MONTHS`, `SIX_MONTHS`, `ONE_YEAR`. These enum values are mapped to human-readable strings via `@map("1_week")`, etc.
+- The application accepts human-readable presets (`1_week`, `1_month`, `3_months`, `6_months`, `1_year`) and maps them to the Prisma enum internally.
+
 ## API Reference
 
 Base path: `http://localhost:<PORT>`
@@ -228,6 +237,42 @@ Base path: `http://localhost:<PORT>`
 - `POST /api/v1/auth/logout`
 - Header: `Authorization: Bearer <JWT>`
 - Success `200`: `{ "success": true }`
+
+### Personal Tokens (API Keys)
+
+- `POST /api/v1/auth/personal-token/create`
+  - Header: `Authorization: Bearer <JWT>`
+  - Body (JSON or `multipart/form-data`): optional `name` and optional `expires_preset` (`1_week`, `1_month`, `3_months`, `6_months`, `1_year`). If omitted, default is `3_months`.
+  - Success `200`:
+    ```json
+    { "token": "<API_KEY>" }
+    ```
+
+- `GET /api/v1/auth/personal-token/list`
+  - Header: `Authorization: Bearer <JWT>`
+  - Returns active (non-revoked, non-expired) tokens owned by the authenticated user.
+  - Success `200`:
+    ```json
+    [
+      { "id": 1, "name": "dev-key", "created_at": "2025-10-28T21:59:47.000Z", "expires_at": "2026-01-28T21:59:47.000Z" }
+    ]
+    ```
+
+- `DELETE /api/v1/auth/personal-token/{id}`
+  - Header: `Authorization: Bearer <JWT>`
+  - Revokes a token by ID. Only the owner can revoke their own token; attempting to revoke someone else’s token results in `404`.
+  - Success `200`:
+    ```json
+    { "revoked": true }
+    ```
+
+### Profile
+
+- `PUT /api/v1/profile` and `PATCH /api/v1/profile`
+  - Accept `multipart/form-data` with optional text fields (`name`, `lastname`, `username`, `phone`) and optional `avatar` file.
+  - Empty strings in optional text fields are ignored; only non-empty values are validated and applied.
+  - The avatar’s type is detected automatically from the uploaded file’s MIME type and normalized; invalid or unsupported types are rejected.
+  - Sending only `avatar` is allowed (no `avatar_type` is required or supported).
 
 ## Development Scripts
 
