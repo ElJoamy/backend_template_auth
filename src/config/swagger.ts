@@ -16,6 +16,8 @@ const swaggerDefinition: OAS3Definition = {
   ],
   tags: [
     { name: 'Auth', description: 'Authentication endpoints' },
+    { name: 'Profile', description: 'User profile endpoints' },
+    { name: 'Two Factor Authentication', description: '2FA endpoints' },
   ],
   components: {
     securitySchemes: {
@@ -23,6 +25,12 @@ const swaggerDefinition: OAS3Definition = {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
+      },
+      apiKeyAuth: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-API-Key',
+        description: 'API Key personal (enviado en header X-API-Key)'
       },
     },
     schemas: {
@@ -107,6 +115,11 @@ const swaggerDefinition: OAS3Definition = {
             properties: {
               email: { type: 'string', format: 'email', description: 'User email. Alternatively, send username.' },
               password: { type: 'string', minLength: 8, description: 'User password (minimum 8 characters)' },
+              two_factor_token: { 
+                type: 'string', 
+                pattern: '^\\d{6}$',
+                description: 'Optional 2FA token (6 digits). Required if 2FA is enabled for the user.' 
+              },
             },
           },
           {
@@ -115,10 +128,15 @@ const swaggerDefinition: OAS3Definition = {
             properties: {
               username: { type: 'string', description: 'Username (3-20, letters/numbers/._-)' },
               password: { type: 'string', minLength: 8, description: 'User password (minimum 8 characters)' },
+              two_factor_token: { 
+                type: 'string', 
+                pattern: '^\\d{6}$',
+                description: 'Optional 2FA token (6 digits). Required if 2FA is enabled for the user.' 
+              },
             },
           },
         ],
-        description: 'Provide email or username along with password. If client sends "email" with a username value, backend treats it as username.',
+        description: 'Provide email or username along with password. Include two_factor_token if 2FA is enabled for the user.',
       },
       ErrorResponse: {
         type: 'object',
@@ -126,10 +144,87 @@ const swaggerDefinition: OAS3Definition = {
           error: { type: 'string', description: 'Client-readable error message' },
         },
       },
+      AvatarType: {
+        type: 'string',
+        enum: ['jpg', 'jpeg', 'png', 'heic', 'heif'],
+        description: 'Accepted avatar image types',
+      },
+      Profile: {
+        type: 'object',
+        required: ['id', 'name', 'lastname', 'username', 'email', 'role'],
+        properties: {
+          id: { type: 'integer' },
+          name: { type: 'string' },
+          lastname: { type: 'string' },
+          username: { type: 'string' },
+          email: { type: 'string', format: 'email' },
+          phone: { type: 'string', nullable: true },
+          avatar_type: { $ref: '#/components/schemas/AvatarType', nullable: true },
+          role: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer', nullable: true },
+              name: { type: 'string', nullable: true, enum: Object.values(RoleName) },
+            },
+          },
+        },
+      },
+      GetProfileResponse: {
+        type: 'object',
+        required: ['user'],
+        properties: {
+          user: { $ref: '#/components/schemas/Profile' },
+        },
+      },
+      UpdateProfileRequest: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', minLength: 2 },
+          lastname: { type: 'string', minLength: 2 },
+          username: { type: 'string', description: '3-20 characters; letters, numbers, . _ -' },
+          phone: { type: 'string', nullable: true, description: 'Optional; 6-15 digits, no spaces or symbols' },
+          avatar: { 
+            type: 'string', 
+            format: 'binary', 
+            description: 'Archivo de imagen del avatar (solo multipart). El tipo se detecta automáticamente; se rechaza si no es jpg/jpeg/png/heic/heif.' 
+          },
+        },
+        description: 'Permite actualizaciones parciales del perfil. Use multipart/form-data para subir el avatar. No envíe avatar_type: el servidor detecta y valida el tipo automáticamente.',
+      },
+      UpdateProfileResponse: {
+        type: 'object',
+        required: ['user'],
+        properties: {
+          user: { $ref: '#/components/schemas/Profile' },
+        },
+      },
+      PersonalTokenExpiryPreset: {
+        type: 'string',
+        enum: ['1_week', '1_month', '3_months', '6_months', '1_year'],
+        description: 'Preset de expiración para tokens personales (default recomendado: 3 meses)'
+      },
+      PersonalTokenCreateRequest: {
+        type: 'object',
+        properties: {
+          name: { type: 'string', description: 'Etiqueta opcional para el token' },
+          expires_preset: {
+            $ref: '#/components/schemas/PersonalTokenExpiryPreset'
+          },
+        },
+        description: 'Cuerpo para creación de token personal (JSON o multipart)'
+      },
+      PersonalTokenCreateResponse: {
+        type: 'object',
+        required: ['token'],
+        properties: {
+          token: { type: 'string', description: 'Token personal en texto claro (solo se muestra una vez)' },
+        },
+      },
     },
   },
   security: [
     { bearerAuth: [] },
+    { apiKeyAuth: [] },
   ],
 };
 

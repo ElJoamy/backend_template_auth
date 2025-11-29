@@ -5,13 +5,14 @@ export interface LoginRequest {
   email?: string;
   username?: string;
   password: string;
+  two_factor_token?: string;
 }
 
 export function parseLoginRequest(body: any): LoginRequest {
   if (!body || typeof body !== 'object') {
     throw new ValidationError('Cuerpo inválido.');
   }
-  const { email, username, password } = body;
+  const { email, username, password, two_factor_token } = body;
 
 
   const emailRaw = typeof email === 'string' ? email : undefined;
@@ -51,5 +52,20 @@ export function parseLoginRequest(body: any): LoginRequest {
   if (!password || typeof password !== 'string' || password.length < 8) {
     throw new ValidationError('Password inválida (mínimo 8 caracteres).');
   }
-  return { email: cleanEmail, username: cleanUsername, password };
+
+  // Validar token 2FA si se proporciona
+  let cleanTwoFactorToken: string | undefined = undefined;
+  if (two_factor_token !== undefined) {
+    if (typeof two_factor_token !== 'string' || !/^\d{6}$/.test(two_factor_token)) {
+      throw new ValidationError('Token 2FA debe ser un código de 6 dígitos.');
+    }
+    cleanTwoFactorToken = two_factor_token;
+  }
+
+  return { 
+    email: cleanEmail, 
+    username: cleanUsername, 
+    password,
+    two_factor_token: cleanTwoFactorToken
+  };
 }

@@ -41,6 +41,19 @@ export async function getActiveSessionByUserId(userId: number): Promise<SessionR
   return rec;
 }
 
+export async function getActiveSessionByJti(jti: string): Promise<SessionRecord | null> {
+  const entity: any = await Sessions.findFirst({
+    where: {
+      jti,
+      revoked_at: null,
+      expires_at: { gt: new Date() },
+    },
+    orderBy: [{ created_at: 'desc' }],
+  });
+  const rec = entity ? toSessionRecord(entity) : null;
+  return rec;
+}
+
 export async function createSession(userId: number, jti: string, expiresAt: Date): Promise<SessionRecord> {
   const saved: any = await Sessions.create({
     data: {
@@ -66,4 +79,24 @@ export async function revokeSessionByJti(jti: string): Promise<boolean> {
   await Sessions.update({ where: { id: entity.id }, data: { revoked_at: new Date() } });
   logger.info(`Session revoked jti=${jti}`);
   return true;
+}
+
+export async function revokeAllActiveSessionsByUserId(userId: number, exceptJti?: string): Promise<number> {
+  const rows: any[] = await Sessions.findMany({
+    where: {
+      user_id: userId,
+      revoked_at: null,
+      expires_at: { gt: new Date() },
+    },
+    orderBy: [{ created_at: 'desc' }],
+    take: 500,
+  });
+  let count = 0;
+  for (const row of rows) {
+    if (exceptJti && row.jti === exceptJti) continue;
+    await Sessions.update({ where: { id: row.id }, data: { revoked_at: new Date() } });
+    count++;
+  }
+  if (count > 0) logger.info(`Revoked ${count} active sessions for user_id=${userId}${exceptJti ? ` (except jti=${exceptJti})` : ''}`);
+  return count;
 }

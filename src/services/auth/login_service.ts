@@ -10,7 +10,9 @@ import {
   getUserByUsername,
   type UserRecord,
 } from '../../repositories/auth/login_repository';
-import { getActiveSessionByUserId, createSession } from '../../repositories/auth/session_repository';
+import { getActiveSessionByUserId, createSession, revokeAllActiveSessionsByUserId } from '../../repositories/auth/session_repository';
+import { getTwoFactorByUserId } from '../../repositories/two_factor/two_factor_repository';
+import { verifyTwoFactorTokenService } from '../two_factor/two_factor_service';
 
 
 const _APP_SETTINGS: AppSettings = getAppSettings();
@@ -32,10 +34,35 @@ export async function loginService(rawBody: any): Promise<LoginResponse> {
     throw new AuthError('Credenciales inválidas.');
   }
 
-  // Bloquear si ya existe una sesión activa para este usuario
+  // Verificar 2FA si está habilitado para el usuario
+  const twoFactorRecord = await getTwoFactorByUserId(user.id);
+  let requiresTwoFactor = false;
+  if (twoFactorRecord && twoFactorRecord.is_enabled) {
+    // Si se proporciona token, verificarlo; de lo contrario, indicar que está pendiente
+    if (input.two_factor_token) {
+      try {
+        const ok2fa = await verifyTwoFactorTokenService(user.id, input.two_factor_token);
+        if (!ok2fa) {
+          throw new AuthError('Código de autenticación de dos factores inválido.');
+        }
+      } catch (error: any) {
+        if (error instanceof AuthError) {
+          throw error;
+        }
+        throw new AuthError('Error al verificar código de autenticación de dos factores.');
+      }
+    } else {
+      requiresTwoFactor = true;
+    }
+  } else if (input.two_factor_token) {
+    // Se proporcionó token 2FA pero no está habilitado
+    throw new AuthError('La autenticación de dos factores no está habilitada para este usuario.', 400);
+  }
+
+  // Si existe una sesión activa, la revocamos para asegurar un único token válido
   const active = await getActiveSessionByUserId(user.id);
   if (active) {
-    throw new AuthError('Ya existe una sesión activa para este usuario.', 409);
+    try { await revokeAllActiveSessionsByUserId(user.id); } catch { /* ignore */ }
   }
 
   logger.info(`Login successful: ${user.email}`);
@@ -45,6 +72,7 @@ export async function loginService(rawBody: any): Promise<LoginResponse> {
     username: user.username,
     role_id: user.role_id,
     role_name: user.role_name,
+    two_factor_pending: requiresTwoFactor ? true : undefined,
   };
   const accessToken = await createAccessToken(payload);
   // Registrar sesión usando jti y exp del token
@@ -63,5 +91,6 @@ export async function loginService(rawBody: any): Promise<LoginResponse> {
     user_id: user.id,
     role_id: user.role_id ?? null,
     access_token: accessToken,
+    requires_two_factor: requiresTwoFactor || undefined,
   };
 }

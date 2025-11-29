@@ -17,19 +17,22 @@ model roles {
 }
 
 model users {
-  id            Int                @id @default(autoincrement())
-  name          String             @db.VarChar(50)
-  lastname      String             @db.VarChar(50)
-  username      String             @unique(map: "IDX_fe0bb3f6520ee0469504521e71") @db.VarChar(80)
-  email         String             @unique(map: "IDX_97672ac88f789774dd47f7c8be") @db.VarChar(120)
-  phone         String?            @unique(map: "IDX_a000cca60bcf04454e72769949") @db.VarChar(20)
-  password_hash String             @db.VarChar(255)
-  avatar_type   users_avatar_type?
-  created_at    DateTime           @default(now()) @db.DateTime(6)
-  updated_at    DateTime           @default(now()) @db.DateTime(6)
-  role_id       Int?
-  user_sessions user_sessions[]
-  roles         roles?             @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a2cecd1a3531c0b041e29ba46e1")
+  id              Int                      @id @default(autoincrement())
+  name            String                   @db.VarChar(50)
+  lastname        String                   @db.VarChar(50)
+  username        String                   @unique(map: "IDX_fe0bb3f6520ee0469504521e71") @db.VarChar(80)
+  email           String                   @unique(map: "IDX_97672ac88f789774dd47f7c8be") @db.VarChar(120)
+  phone           String?                  @unique(map: "IDX_a000cca60bcf04454e72769949") @db.VarChar(20)
+  password_hash   String                   @db.VarChar(255)
+  avatar_type     users_avatar_type?
+  created_at      DateTime                 @default(now()) @db.DateTime(6)
+  updated_at      DateTime                 @default(now()) @db.DateTime(6)
+  role_id         Int?
+  personal_tokens personal_access_tokens[]
+  recovery_codes  user_recovery_codes[]
+  user_sessions   user_sessions[]
+  two_factor      UserTwoFactor?           @relation("UserTwoFactorOnUser")
+  roles           roles?                   @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_a2cecd1a3531c0b041e29ba46e1")
 
   @@index([role_id], map: "FK_a2cecd1a3531c0b041e29ba46e1")
 }
@@ -47,6 +50,53 @@ model user_sessions {
   @@index([user_id], map: "FK_085d540d9f418cfbdc7bd55bb19")
 }
 
+model UserTwoFactor {
+  id           Int            @id @default(autoincrement())
+  user_id      Int            @unique
+  secret       String         @db.VarChar(255)
+  algorithm    totp_algorithm
+  digits       Int
+  period       Int
+  issuer       String?        @db.VarChar(128)
+  label        String?        @db.VarChar(128)
+  is_enabled   Boolean        @default(false)
+  confirmed_at DateTime?      @db.DateTime(0)
+  created_at   DateTime       @default(now()) @db.DateTime(6)
+  updated_at   DateTime       @default(now()) @db.DateTime(6)
+  users        users          @relation("UserTwoFactorOnUser", fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("user_two_factor")
+}
+
+/// Códigos de recuperación de 2FA (almacenados como hash)
+model user_recovery_codes {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  code_hash  String    @db.VarChar(255)
+  used_at    DateTime?
+  created_at DateTime  @default(now()) @db.DateTime(6)
+  updated_at DateTime  @default(now()) @db.DateTime(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id])
+}
+
+/// Tokens de acceso personal (API Keys) para login por token
+model personal_access_tokens {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  token_hash String    @db.VarChar(255)
+  name       String?   @db.VarChar(80)
+  expires_preset personal_token_expiry_preset? @default(THREE_MONTHS)
+  expires_at DateTime @db.DateTime(6)
+  revoked_at DateTime? @db.DateTime(6)
+  created_at DateTime  @default(now()) @db.DateTime(6)
+  updated_at DateTime  @default(now()) @db.DateTime(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([user_id])
+}
+
 enum users_avatar_type {
   jpg
   jpeg
@@ -61,4 +111,19 @@ enum roles_name {
   member
   guest
   invited
+}
+
+enum totp_algorithm {
+  sha1
+  sha256
+  sha512
+}
+
+/// Presets de expiración de tokens personales (mapeados a valores legibles)
+enum personal_token_expiry_preset {
+  ONE_WEEK @map("1_week")
+  ONE_MONTH @map("1_month")
+  THREE_MONTHS @map("3_months")
+  SIX_MONTHS @map("6_months")
+  ONE_YEAR @map("1_year")
 }

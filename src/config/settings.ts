@@ -8,6 +8,7 @@ export interface AppSettings {
   version: string;
   log_level: string;
   port: number;
+  api_base_url: string;
 }
 
 export interface DbSettings {
@@ -63,6 +64,7 @@ export function getSettings(): Settings {
       version: env.K_REVISION ?? "local",
       log_level: env.LOG_LEVEL ?? "DEBUG",
       port: env.PORT ? Number(env.PORT) : 3000,
+      api_base_url: env.API_BASE_URL ?? "http://localhost",
     },
     db: {
       db_host: env.DB_HOST ?? "localhost",

@@ -20,8 +20,12 @@ const upload = multer();
  *     description: |
  *       Authenticates a user using **email** or **username** plus **password**.
  *       - Password requires at least 8 characters.
- *       - Returns an **access_token (JWT)** to use in `Authorization: Bearer <token>`.
+ *       - Returns an **access_token (JWT)** to use en `Authorization: Bearer <token>`.
  *       - If an active session already exists for the user, returns **409 Conflict**.
+ *       - If 2FA is enabled for the user y no envías `two_factor_token`, el login es en **dos pasos**:
+ *         - Respuesta incluye `requires_two_factor: true` y el token tendrá `two_factor_pending: true`.
+ *         - Ese token NO tiene acceso a endpoints protegidos.
+ *         - Luego llama a `POST /api/v1/auth/two-factor/login` con el código 2FA para obtener acceso completo.
  *     security: []
  *     requestBody:
  *       required: true
@@ -35,32 +39,64 @@ const upload = multer();
  *               value:
  *                 email: john@example.com
  *                 password: MyPassw0rd!
+ *             email_login_2fa:
+ *               summary: Login using email with 2FA enabled
+ *               value:
+ *                 email: john@example.com
+ *                 password: MyPassw0rd!
+ *                 two_factor_token: "123456"
  *             username_login:
  *               summary: Login using username
  *               value:
  *                 username: john123
  *                 password: MyPassw0rd!
-  *         multipart/form-data:
-  *           schema:
-  *             $ref: '#/components/schemas/LoginRequest'
-  *           examples:
-  *             email_login_form:
-  *               summary: Login (form-data) using email
-  *               value:
-  *                 email: john@example.com
-  *                 password: MyPassw0rd!
-  *             username_login_form:
-  *               summary: Login (form-data) using username
-  *               value:
-  *                 username: john123
-  *                 password: MyPassw0rd!
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *           examples:
+ *             email_login_form:
+ *               summary: Login (form-data) using email
+ *               value:
+ *                 email: john@example.com
+ *                 password: MyPassw0rd!
+ *             email_login_form_2fa:
+ *               summary: Login (form-data) using email with 2FA enabled
+ *               value:
+ *                 email: john@example.com
+ *                 password: MyPassw0rd!
+ *                 two_factor_token: "123456"
+ *             username_login_form:
+ *               summary: Login (form-data) using username
+ *               value:
+ *                 username: john123
+ *                 password: MyPassw0rd!
  *     responses:
  *       '200':
- *         description: Login successful
+ *         description: Login exitoso (puede requerir 2FA)
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/LoginResponse'
+ *             examples:
+ *               no_2fa:
+ *                 summary: 2FA no habilitado
+ *                 value:
+ *                   user_id: 1
+ *                   role_id: 2
+ *                   access_token: "<JWT>"
+ *               two_step:
+ *                 summary: 2FA habilitado, requiere segundo paso
+ *                 value:
+ *                   user_id: 1
+ *                   role_id: 2
+ *                   access_token: "<JWT with two_factor_pending>"
+ *                   requires_two_factor: true
+ *       '400':
+ *         description: Token 2FA inválido cuando se proporciona
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       '409':
  *         description: An active session already exists for the user
  *         content:

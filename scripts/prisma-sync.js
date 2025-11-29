@@ -28,8 +28,14 @@ function run(cmd, args) {
   }
 }
 
-logger.info(`Pulling schema from DB ${host}:${port}/${name}`);
-run('npx', ['prisma', 'db', 'pull']);
+const mode = (process.env.PRISMA_SYNC_MODE || 'push').toLowerCase();
+if (mode === 'pull') {
+  logger.info(`Pulling schema from DB ${host}:${port}/${name}`);
+  run('npx', ['prisma', 'db', 'pull']);
+} else {
+  logger.info(`Pushing local schema to DB ${host}:${port}/${name}`);
+  run('npx', ['prisma', 'db', 'push']);
+}
 
 logger.info('Generating Prisma client');
 run('npx', ['prisma', 'generate']);
